@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cookie Sync Plus settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="top">
+      <div class="lockup">
+        <img src="icons/icon-128.png" alt="" width="48" height="48">
+        <div>
+          <div class="eyebrow">Local only · No network calls · MIT</div>
+          <h1>Cookie Sync Plus</h1>
+          <p class="sub">Choose what your agent gets. Everything here stays on this computer.</p>
+        </div>
+      </div>
+      <span class="version" id="version"></span>
+    </header>
+
+    <section class="card status">
+      <div class="status-main">
+        <div class="status-line" id="status-line">Reading the last export…</div>
+        <div class="status-detail" id="status-detail"></div>
+      </div>
+      <div class="status-actions">
+        <button id="export-now" class="primary">Export now</button>
+        <span class="saved" id="saved" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <section class="card preview" id="preview">
+      <strong id="preview-count">…</strong>
+      <span id="preview-text"></span>
+    </section>
+
+    <section class="card" id="health-card">
+      <div class="list-head">
+        <h2>Agent health</h2>
+        <button id="health-refresh" class="ghost">Refresh</button>
+      </div>
+      <div class="status-line" id="health-line">Waiting for the first report from your agent…</div>
+      <div class="status-detail" id="health-detail"></div>
+      <p class="hint">After each inject, your agent writes <code>inject.meta.json</code>. Copy it back into the sync folder as <code>agent-health.json</code> (your bot's sync job can do this) and this panel shows whether the bot is actually staying signed in.</p>
+    </section>
+
+    <section class="card">
+      <h2>Which sites</h2>
+      <div class="choices" role="radiogroup" aria-label="Site rule">
+        <label class="choice"><input type="radio" name="mode" value="all"><span><b>Every site I am signed into</b><small>The whole cookie jar, minus anything switched off below.</small></span></label>
+        <label class="choice"><input type="radio" name="mode" value="include"><span><b>Only the sites I pick</b><small>Tick sites in the list. Nothing else leaves Chrome.</small></span></label>
+        <label class="choice"><input type="radio" name="mode" value="exclude"><span><b>Every site except the ones I pick</b><small>Tick the sites to hold back.</small></span></label>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="skip-big-three">
+        <span><b>Never export Google, Meta or X</b><small>Recommended. A cloud browser arriving on those accounts trips their risk systems. Use their own MCP servers, plugins or APIs instead.</small></span>
+      </label>
+      <label class="toggle">
+        <input type="checkbox" id="minimize">
+        <span><b>Only session cookies</b><small>Export only the cookies that look like sessions (server-set, or a session-like name). Tracking and preference cookies stay behind, so the export is smaller and exposes less.</small></span>
+      </label>
+    </section>
+
+    <section class="card">
+      <h2>Sealed export</h2>
+      <div class="row">
+        <label for="passphrase">Passphrase</label>
+        <input type="password" id="passphrase" placeholder="Leave empty for a plain export" autocomplete="new-password">
+        <button id="passphrase-save" class="ghost">Set</button>
+        <button id="passphrase-clear" class="ghost">Clear</button>
+      </div>
+      <p class="hint" id="seal-hint">With a passphrase set, every export is sealed with AES-256-GCM before it reaches the sync folder. The folder then holds ciphertext only: whoever moves the file never sees a live session. The passphrase itself stays in this browser and is never exported. Your agent needs the same passphrase to unseal (<code>inject-cookies.py --passphrase-env</code>).</p>
+    </section>
+
+    <section class="card">
+      <h2>Only sites used recently</h2>
+      <div class="pills" id="recent-pills" role="radiogroup" aria-label="Recent window"></div>
+      <p class="hint" id="recent-hint">Chrome does not record when a cookie was created, so this reads your browsing history (asked for once, read locally) plus the cookie changes this extension has seen since it was installed.</p>
+    </section>
+
+    <section class="card">
+      <div class="list-head">
+        <h2 id="list-title">Sites</h2>
+        <div class="list-tools">
+          <input type="search" id="search" placeholder="Search sites" aria-label="Search sites">
+          <label class="mini"><input type="checkbox" id="signed-in-only"> Only sites that look signed in</label>
+          <button id="select-shown" class="ghost">Tick all shown</button>
+          <button id="clear-shown" class="ghost">Untick all shown</button>
+        </div>
+      </div>
+      <p class="hint" id="list-hint"></p>
+      <div class="list" id="list" role="list"></div>
+      <p class="hint" id="list-foot"></p>
+    </section>
+
+    <section class="card">
+      <h2>Timing</h2>
+      <div class="row">
+        <label for="every">Scheduled export every</label>
+        <select id="every"></select>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="instant">
+        <span><b>Instant sync</b><small>When a sign-in cookie changes on a site the rules allow, export within about a minute instead of waiting for the schedule. At most one of these every two minutes.</small></span>
+      </label>
+      <p class="hint">The scheduled run is a heartbeat: if nothing changed since the last export, the files are left alone. On demand at any time: click the toolbar icon, or run <code>Request-Sync.ps1</code> / <code>request-sync.sh</code>. Every export is appended to <code>export.log</code> in the sync folder.</p>
+    </section>
+
+    <footer class="foot">
+      <span>Local only. No network calls. MIT. Forked from markfulton/agent-cookie-sync, extended with sealed exports, session minimization and agent health.</span>
+    </footer>
+  </main>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

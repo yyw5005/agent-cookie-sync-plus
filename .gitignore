@@ -1,0 +1,19 @@
+# The sync folder never belongs in the repository.
+cookies.json
+cookies.enc.json
+cookies.meta.json
+agent-health.json
+export.log
+AgentCookieSync/
+.agentcookiesync/
+
+# Editors and OS noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+sync-request.flag
+inject.meta.json
+*.flag
